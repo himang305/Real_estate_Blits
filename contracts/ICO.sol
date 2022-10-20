@@ -40,9 +40,9 @@ contract ICO is ReentrancyGuard{
     /**
      * @dev Constructor Function
      */
-    constructor(BlitsToken _tokenContract, TimeLock _timelockContract) {
+    constructor(BlitsToken _tokenContract, TimeLock _timelockContract, address _reserve) {
         investorMinCap = 10 ** 18;
-        reserveWallet = address(0);
+        reserveWallet = _reserve;
         timelockContract = _timelockContract;
         tokenContract = _tokenContract;
         icoAdmin = msg.sender;

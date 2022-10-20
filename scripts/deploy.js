@@ -5,22 +5,29 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const hre = require("hardhat");
+const { expect } = require("chai");
+const { ethers, BigNumber } = require("hardhat");
 
 async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+  
+  const token = await ethers.getContractFactory("BlitsToken");
+  factoryContract = await token.deploy("0xf922e3223567AeB66e6986cb09068B1B879B6ccc");
+  await factoryContract.deployed();
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  console.log(factoryContract.address, " Token address");
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+  const tokenlock = await ethers.getContractFactory("TimeLock");
+  tokenlockfactoryContract = await tokenlock.deploy(factoryContract.address);
+  await tokenlockfactoryContract.deployed();
 
-  await lock.deployed();
+  console.log(tokenlockfactoryContract.address, " Lock address");
 
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+
+  const ico = await ethers.getContractFactory("ICO");
+  icofactoryContract = await ico.deploy(factoryContract.address,tokenlockfactoryContract.address,"0xf922e3223567AeB66e6986cb09068B1B879B6ccc");
+  await icofactoryContract.deployed();
+
+  console.log(icofactoryContract.address, " ICO address");
 }
 
 // We recommend this pattern to be able to use async/await everywhere
